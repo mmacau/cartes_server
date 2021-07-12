@@ -58,7 +58,24 @@ router .get('/', (req,res) =>{
          } 
         
 })    
-   
+.post('/update', async (req, res, next)=> {
+    const nom = req.body.nom;
+    const email = req.body.email;
+    const password = req.body.password;
+    const id =  req.body.id;
+    var role = req.body.role;
+    if(!nom || !email || !password){
+        res.status(500).send("faltaen paramentres");
+    }
+    userModel.updateUser(id, nom, email, password, role)
+    .then(user =>{
+        console.log(id+ "actualitzat");
+        res.send("Usuari Actualitzat");
+    })
+    .catch(err => {
+        return res.status(500).send("Error al actualitar Usuari");
+    } )
+})   
     
 
 

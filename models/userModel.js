@@ -32,5 +32,16 @@ module.exports = {
             }
              )
         })
+    },
+    updateUser(id, nom, email, password, role){
+        return new Promise((resolve, reject)=> {
+            connection.query(`update User set nom = ?, email = ?, password = ?, role = ? where ID = ?`,
+            [nom, email, password, role, id],
+            (err)=> {
+                if (err) reject(err)
+                else resolve();
+            });
+        
+        }) 
     }
 }
