@@ -17,8 +17,7 @@ module.exports = {
             values (?,?,?,?)`,
             [nom, email, password, role], (err, resultats)=> {
                 if(err) reject(err);
-                else resolve(resultats);
-                console.log(nom);
+                else resolve(resultats.insertId);
             })
         })
     }

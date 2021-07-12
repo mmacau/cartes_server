@@ -5,7 +5,7 @@ var router = require ('express').Router();
 const userModel = require("../models/userModel");
 //importem el modul bcrytp
 const bcrypt = require("bcrypt");
-//importem el token jwt test test 
+//importem el token jwt
 const jwt = require("jwt-simple");
 
 //Home
@@ -32,12 +32,12 @@ router .get('/', (req,res) =>{
             
            await userModel.newUser(nom, email, password, role)
            .then(userId => {
-               console.log("estic al then")
-               res.send("ok");
-               res.redirect("/users")
+               res.status(200).send("Usuari Creat");
+               
+               
            })
            .catch(err => {
-               return res.status(500).send("entrem al catch");
+               return res.status(500).send(err);
            })
          } 
         
