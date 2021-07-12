@@ -20,6 +20,22 @@ router .get('/', (req,res) =>{
 
         })
     })
+.get('/user/:id', async (req, res, next)=>{
+    const id = req.params.id;
+    console.log(id);
+    await userModel.getById(id)
+    .then(usuari => {
+        if(usuari){
+            res.json({usuari});
+        }else{
+            res.status(500).send("No hi ha cap usuari/a amb aquest ID")
+        }
+    })
+            
+    .catch(err => {
+                return res.status(500).send('Usuari Inexistent');
+            })
+})   
 .post('/registrar',  async (req,res,next)=>{
         const nom = req.body.nom;
         const email = req.body.email;

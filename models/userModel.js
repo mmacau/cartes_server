@@ -20,5 +20,17 @@ module.exports = {
                 else resolve(resultats.insertId);
             })
         })
+    },
+    getById(id){
+      return new Promise((resolve, reject)=> {
+            connection.query('SELECT * FROM `User` WHERE id = ?',
+            [id],
+            (err, resultats)=> {
+                console.log(resultats);
+                if(err) reject(err);
+                else resolve(resultats);
+            }
+             )
+        })
     }
 }
