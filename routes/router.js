@@ -7,7 +7,11 @@ const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 //importem el token jwt
 const jwt = require("jwt-simple");
-
+//importem moment 
+const moment = require("moment");
+// importem el create token
+const token = require('../token');
+const { checkToken } = require('../token');
 //Home
 router .get('/', (req,res) =>{
     res.json({prova: "construint el server"});
@@ -26,6 +30,7 @@ router .get('/', (req,res) =>{
     await userModel.getById(id)
     .then(usuari => {
         if(usuari){
+            //console.log(usuari[0].password);
             res.json({usuari});
         }else{
             res.status(500).send("No hi ha cap usuari/a amb aquest ID")
@@ -74,9 +79,41 @@ router .get('/', (req,res) =>{
     })
     .catch(err => {
         return res.status(500).send("Error al actualitar Usuari");
-    } )
+    } )   
 })   
+.get('/eliminar/:id', (req, res, next)=> {
+    const id = req.params.id;
+    userModel.deleteUser(id)
+    .then(user => {
+        res.json("Usuari Eliminat")
+    })
+    .catch(err => {
+        return res.status(500).send('no sha pogut eliminar');
+    })
+})
+.get('/login', async (req,res, next)=>{
+    const email = req.body.email;
+    const password = req.body.password;
+    const user = await userModel.getByEmail(email)
+    if(user === undefined){
+        res.json({error: 'user not exists'});
+    }else{
+        //comparem passwords retorna true/fals
+        const equals = bcrypt.compareSync(password, user[0].password);
+        if(!equals){
+            res.json({error: 'password incorrecte'});
+        }else{
+            res.json({
+                done: 'login ok',
+                token: token.createToken(user[0])
+                    })        
+        }
+    }
     
+})
+.get('/main', (req,res)=>{
+    token.checkToken(req, res);
+})
 
 
 

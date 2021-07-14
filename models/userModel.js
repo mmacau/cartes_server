@@ -33,6 +33,18 @@ module.exports = {
              )
         })
     },
+    getByEmail(email){
+        return new Promise((resolve, reject)=> {
+              connection.query('SELECT * FROM `User` WHERE email = ?',
+              [email],
+              (err, resultats)=> {
+                  //console.log(resultats);
+                  if(err) reject(err);
+                  else resolve(resultats);
+              }
+               )
+          })
+      },
     updateUser(id, nom, email, password, role){
         return new Promise((resolve, reject)=> {
             connection.query(`update User set nom = ?, email = ?, password = ?, role = ? where ID = ?`,
@@ -43,5 +55,15 @@ module.exports = {
             });
         
         }) 
+    },
+    deleteUser(id){
+        return new Promise((resolve, reject)=>{
+            connection.query(`delete from User where id = ?`, [id],
+            (err)=> {
+                if(err) reject(err);
+                else resolve();
+            })
+
+        })
     }
 }
