@@ -11,13 +11,13 @@ const jwt = require("jwt-simple");
 const moment = require("moment");
 // importem el create token
 const token = require('../token');
-const { checkToken } = require('../token');
 //Home
 router .get('/', (req,res) =>{
+
     res.json({prova: "construint el server"});
 } )
-.get('/users', async (req,res, next)=>{
-          await userModel.getAllUsers()
+.get('/users', token.checkToken, async (req,res, next)=>{
+         await userModel.getAllUsers()
         .then(usuaris => res.json({usuaris}))
         .catch(err => {
              return res.status(500).send("Error amb la Base de Dades");
@@ -91,7 +91,7 @@ router .get('/', (req,res) =>{
         return res.status(500).send('no sha pogut eliminar');
     })
 })
-.get('/login', async (req,res, next)=>{
+.post('/signin', async (req,res, next)=>{
     const email = req.body.email;
     const password = req.body.password;
     const user = await userModel.getByEmail(email)
@@ -99,20 +99,30 @@ router .get('/', (req,res) =>{
         res.json({error: 'user not exists'});
     }else{
         //comparem passwords retorna true/fals
+        try{
         const equals = bcrypt.compareSync(password, user[0].password);
-        if(!equals){
-            res.json({error: 'password incorrecte'});
-        }else{
-            res.json({
+            if(!equals){
+                res.json({error: 'password incorrecte'});
+            }else{
+                res.json({
                 done: 'login ok',
                 token: token.createToken(user[0])
-                    })        
+                    })  
+                    console.log(user[0]);      
         }
+        } catch(err){
+            res.json({err: "algu no exiteix"})
+        }
+        
     }
     
 })
-.get('/main', (req,res)=>{
-    token.checkToken(req, res);
+.get('/login', (req, res)=>{
+    res.json({msg: 'posa les dades'})
+})
+//per fer proves amb el token
+.get('/main', token.checkToken, (req,res)=>{
+    res.send("cucu");
 })
 
 

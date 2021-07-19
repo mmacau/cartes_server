@@ -4,17 +4,20 @@ const moment = require("moment");
 module.exports = {
 createToken(user) {
     let payload = {
-        userId: user.id,
+        userId: user.ID,
+        userEmail: user.email,
         createdAt: moment().unix(),
         expiresAt: moment().add(60,'m').unix()
     }
+    console.log(payload);
     return jwt.encode(payload, process.env.TOKEN_KEY);
 },
-checkToken(req, res){
-    let token = req.headers['user_token'];
+checkToken(req, res, next){
+   let token = req.headers['user_token'];
+   
     //mirem si hi ha el token enviat per headers
     if(!token){
-         return res.json("error: 'no tens token");
+         return res.send("error: 'no tens token");
     }else{
         //hi ha token posem el payload
         let payload = null
@@ -23,12 +26,13 @@ checkToken(req, res){
             payload = jwt.decode(token, process.env.TOKEN_KEY)
             
         } catch(err){
-            return res.json({error: 'Expired Token'});
+            return res.json({error: 'No tens Token'});
         } //comprovem que el token es vigent
             if(moment().unix() > payload.expiresAt){
                 return res.json({error: 'Expired token'});
              }else{
-                return res.json({payload});
+                 next();
+                return true;
         }
     }
     

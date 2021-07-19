@@ -1,4 +1,3 @@
-const { promise } = require("../dbConnection");
 const connection = require("../dbConnection");
 module.exports = {
     getAllUsers(){
